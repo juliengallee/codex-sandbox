@@ -1,79 +1,43 @@
-# Plateforme de tri automatisé de documents
+# Roadmap personnalisée pour une plateforme de tri documentaire
 
-## 1. Définition des besoins
-- **Types de documents** : factures entrantes/sortantes, documents administratifs (impôts, attestations, contrats), autres (notes internes, courriers).
-- **Sources** : fichiers PDF, scans, emails, photos (smartphone).
-- **Utilisateurs** : service comptable, administratif, direction.
-- **Contraintes** : sécurité des données, conformité RGPD, extensibilité à de nouveaux types.
+## 1. Objectif général
+Mettre en place une solution personnelle, sécurisée et autonome fonctionnant sur Mac pour collecter, classifier et exploiter des documents sensibles (factures, documents administratifs, notes internes, etc.).
 
-## 2. Architecture globale
-1. **Collecte**
-   - Connecteurs (dossier partagé, mailbox IMAP, API ERP).
-   - Scanner mobile/web (upload manuel).
-2. **Prétraitement**
-   - Normalisation PDF/images → OCR (Tesseract, AWS Textract, Azure Vision) si nécessaire.
-   - Nettoyage texte, détection langue.
-3. **Classification & Extraction**
-   - Modèle NLP supervisé (BERT, CamemBERT) ou service ML clé en main.
-   - Règles complémentaires (regex montants, IBAN, SIREN).
-   - Extraction de champs (date, montant, fournisseur, échéance).
-4. **Indexation & Stockage**
-   - Base de données (PostgreSQL/Elasticsearch) pour métadonnées + fichiers.
-   - Storage chiffré (S3, Azure Blob, OnPrem).
-5. **Interface & Workflow**
-   - Web app (React/Vue + API REST/GraphQL) ou intégration existante (SharePoint, Nextcloud).
-   - Tableau de bord, filtres, validation manuelle, règles d’archivage.
-6. **Notifications & Intégrations**
-   - Alertes (factures à payer, documents manquants).
-   - Exports vers ERP/compta (API, fichiers CSV).
+## 2. Parcours d'évolution
 
-## 3. Modèle de classification
-1. **Données d’entraînement**
-   - Annoter corpus représentatif (1000+ docs).
-   - Catégories hiérarchiques (ex. Facture → émise/reçue, Administratif → impôts, assurance).
-2. **Approche ML**
-   - Base : transformer francophone (CamemBERT) fine-tuné.
-   - Pipeline : tokenisation, fine-tuning, validation croisée.
-   - Option low-code : services AutoML (Google, Azure).
-3. **Extraction d’informations**
-   - Modèles séquence étiquetage (spaCy, HuggingFace) pour champs clés.
-   - Règles post-traitement (montant total vs TVA, échéance).
-   - Normalisation (dates ISO, montants en euros).
+### 2.1 POC local (1-2 semaines)
+- Créez un dossier surveillé sur votre Mac pour déposer vos PDF ou scans et utilisez une routine Python (ex. `watchdog`) pour déclencher l'ingestion dès qu'un fichier arrive, afin de valider le flux de collecte local sans dépendances externes.
+- Appliquez un OCR basique pour les contenus image/PDF (Tesseract via Homebrew) et entraînez un premier modèle de classification supervisée (CamemBERT ou service AutoML hors ligne) sur un échantillon réduit pour trier quelques catégories personnelles.
+- Exposez une interface très simple (Streamlit ou petite app React lancée en local) permettant de visualiser, trier et valider les documents afin de confirmer la pertinence métier du tri automatique, tout en conservant les données sur le disque chiffré de votre Mac.
 
-## 4. Déploiement
-1. **Infrastructure**
-   - Cloud (AWS/Azure/GCP) ou serveur interne.
-   - Conteneurisation (Docker, Kubernetes) pour scalabilité.
-2. **Pipeline CI/CD**
-   - Tests automatisés, monitoring performances modèle.
-   - Mises à jour régulières du jeu de données.
-3. **Sécurité & conformité**
-   - Authentification (SSO, OAuth).
-   - Chiffrement en transit (HTTPS) et au repos.
-   - Journalisation, conservation, purge.
+### 2.2 MVP “usage quotidien” (3-5 semaines supplémentaires)
+- Étendez la chaîne précédente en ajoutant l'extraction des principaux champs (dates, montants, interlocuteurs) via spaCy, transformers et règles regex, puis stockez métadonnées et fichiers chiffrés dans une base locale (SQLite ou PostgreSQL via Docker Desktop).
+- Sécurisez l'accès avec une authentification locale (mot de passe maître dans le Trousseau macOS, chiffrement TLS auto-signé) et ajoutez un historique d'actions pour tracer les manipulations sensibles ; mettez en place un pipeline de tests unitaires basiques pour fiabiliser les mises à jour.
+- Organisez des sessions de tests et recueillez le feedback pour affiner catégories, règles et performances du modèle, tout en ajoutant un script de sauvegarde automatique (Time Machine chiffré, archive gpg) et un pipeline CI/CD minimal pour automatiser les mises à jour.
 
-## 5. Roadmap
-1. **Prototype (2-4 semaines)**
-   - OCR + classification sur petit échantillon.
-   - Interface simple de visualisation et tri.
-2. **MVP (6-8 semaines)**
-   - Ajout extraction champs, base données, authentification.
-   - Tests utilisateurs, ajustements catégories.
-3. **Version production**
-   - Intégrations ERP/compta.
-   - Tableau de bord complet, alertes, workflow d’approbation.
-4. **Évolution**
-   - Apprentissage continu (feedback utilisateurs).
-   - Nouveaux types documents, multilingue, signature électronique.
+### 2.3 Version personnelle aboutie (V2)
+- Conteneurisez vos services (FastAPI + PostgreSQL + interface web) avec Docker Desktop pour simplifier la maintenance et permettre un déploiement sur un NAS ou mini-serveur local, en renforçant notifications macOS, exports chiffrés et intégrations optionnelles avec vos outils comptables.
+- Ajoutez des automatisations : alertes locales pour échéances détectées, génération d'exports chiffrés (CSV/PDF) et intégrations API, en conservant les clés dans le Trousseau macOS ; mettez en place une gouvernance légère avec sessions d'annotation périodiques et suivi de KPIs personnels.
+- Renforcez la sécurité : isolation réseau (pare-feu Mac), chiffrement TLS même en local, rotation régulière des clés, vérification de l'intégrité des conteneurs et plan de purge automatique des documents sensibles après validation finale.
 
-## 6. Stack technique suggérée
-- **Backend** : Python (FastAPI) ou Node.js (NestJS).
-- **NLP/OCR** : HuggingFace Transformers, spaCy, Tesseract/Azure/AWS.
-- **Frontend** : React + Material UI.
-- **Base** : PostgreSQL + Elasticsearch (recherche).
-- **Infrastructure** : Docker, Kubernetes, CI/CD (GitLab/GitHub Actions).
+## 3. Feuille de route synthétique
 
-## 7. Gouvernance & maintenance
-- Processus d’annotation continue.
-- KPIs : précision classification, temps traitement, taux d’erreurs manuelles.
-- Plan de support, documentation, formation utilisateurs.
+### POC
+1. Définir un flux minimal de collecte (upload manuel ou connecteur simple) pour ingérer un lot représentatif de documents.
+2. Appliquer un OCR basique pour les contenus image/PDF et entraîner un premier modèle de classification supervisée sur un échantillon réduit.
+3. Exposer une interface très simple (tableau ou liste) permettant de visualiser et trier les documents afin de valider la pertinence métier du tri automatique.
+
+### MVP
+1. Étendre la chaîne précédente en ajoutant l'extraction des principaux champs (date, montant, fournisseur…) via modèles de séquençage ou règles, puis stocker métadonnées et fichiers dans une base structurée sécurisée.
+2. Mettre en place l'authentification des utilisateurs et une interface plus riche (filtres, validation manuelle) connectée à une API backend stable pour les premiers tests utilisateurs.
+3. Organiser des sessions de tests et recueillir le feedback pour affiner catégories, règles et performances du modèle, en amorçant un pipeline CI/CD basique pour automatiser les mises à jour.
+
+### V2 (version production avancée)
+1. Intégrer la plateforme avec les systèmes métiers (ERP/comptabilité) via API ou exports, en renforçant notifications, alertes et workflows d'approbation complets.
+2. Industrialiser l'infrastructure (conteneurs, monitoring, sécurité TLS/SSO) et instaurer une gouvernance data : annotation continue, KPIs de qualité, plan de support.
+3. Préparer l'évolution fonctionnelle : apprentissage continu, nouveaux types de documents, multilingue ou signature électronique pour assurer la montée en puissance de la solution.
+
+## 4. Bonnes pratiques de sécurité continue
+- Gardez tout le pipeline hors ligne par défaut ; n'activez une synchronisation cloud que si elle est chiffrée de bout en bout.
+- Documentez les procédures de restauration, définissez un plan de réponse en cas de fuite locale (perte/vol de Mac) et utilisez FileVault plus un mot de passe robuste pour protéger l'ensemble de la machine.
+
