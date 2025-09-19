@@ -1,83 +1,79 @@
-# Gestionnaire de tri de documents administratifs
+# Plateforme de tri automatisé de documents
 
-Ce projet propose un outil de classification pour les contrats, factures et autres documents administratifs. Son objectif est de faciliter l'organisation automatique des documents en fonction de critères personnalisables, afin de gagner du temps et de réduire les erreurs de classement.
+## 1. Définition des besoins
+- **Types de documents** : factures entrantes/sortantes, documents administratifs (impôts, attestations, contrats), autres (notes internes, courriers).
+- **Sources** : fichiers PDF, scans, emails, photos (smartphone).
+- **Utilisateurs** : service comptable, administratif, direction.
+- **Contraintes** : sécurité des données, conformité RGPD, extensibilité à de nouveaux types.
 
-## Pré-requis techniques et dépendances
+## 2. Architecture globale
+1. **Collecte**
+   - Connecteurs (dossier partagé, mailbox IMAP, API ERP).
+   - Scanner mobile/web (upload manuel).
+2. **Prétraitement**
+   - Normalisation PDF/images → OCR (Tesseract, AWS Textract, Azure Vision) si nécessaire.
+   - Nettoyage texte, détection langue.
+3. **Classification & Extraction**
+   - Modèle NLP supervisé (BERT, CamemBERT) ou service ML clé en main.
+   - Règles complémentaires (regex montants, IBAN, SIREN).
+   - Extraction de champs (date, montant, fournisseur, échéance).
+4. **Indexation & Stockage**
+   - Base de données (PostgreSQL/Elasticsearch) pour métadonnées + fichiers.
+   - Storage chiffré (S3, Azure Blob, OnPrem).
+5. **Interface & Workflow**
+   - Web app (React/Vue + API REST/GraphQL) ou intégration existante (SharePoint, Nextcloud).
+   - Tableau de bord, filtres, validation manuelle, règles d’archivage.
+6. **Notifications & Intégrations**
+   - Alertes (factures à payer, documents manquants).
+   - Exports vers ERP/compta (API, fichiers CSV).
 
-* Python 3.9 ou supérieur.
-* `pip` pour la gestion des dépendances.
-* `virtualenv` (recommandé) pour isoler l'environnement d'exécution.
-* Dépendances listées dans `requirements.txt`.
+## 3. Modèle de classification
+1. **Données d’entraînement**
+   - Annoter corpus représentatif (1000+ docs).
+   - Catégories hiérarchiques (ex. Facture → émise/reçue, Administratif → impôts, assurance).
+2. **Approche ML**
+   - Base : transformer francophone (CamemBERT) fine-tuné.
+   - Pipeline : tokenisation, fine-tuning, validation croisée.
+   - Option low-code : services AutoML (Google, Azure).
+3. **Extraction d’informations**
+   - Modèles séquence étiquetage (spaCy, HuggingFace) pour champs clés.
+   - Règles post-traitement (montant total vs TVA, échéance).
+   - Normalisation (dates ISO, montants en euros).
 
-## Installation
+## 4. Déploiement
+1. **Infrastructure**
+   - Cloud (AWS/Azure/GCP) ou serveur interne.
+   - Conteneurisation (Docker, Kubernetes) pour scalabilité.
+2. **Pipeline CI/CD**
+   - Tests automatisés, monitoring performances modèle.
+   - Mises à jour régulières du jeu de données.
+3. **Sécurité & conformité**
+   - Authentification (SSO, OAuth).
+   - Chiffrement en transit (HTTPS) et au repos.
+   - Journalisation, conservation, purge.
 
-1. Cloner le dépôt :
-   ```bash
-   git clone <url-du-depot>
-   cd codex-sandbox
-   ```
-2. Créer et activer un environnement virtuel :
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # Sous Windows : .venv\\Scripts\\activate
-   ```
-3. Installer les dépendances :
-   ```bash
-   pip install -r requirements.txt
-   ```
+## 5. Roadmap
+1. **Prototype (2-4 semaines)**
+   - OCR + classification sur petit échantillon.
+   - Interface simple de visualisation et tri.
+2. **MVP (6-8 semaines)**
+   - Ajout extraction champs, base données, authentification.
+   - Tests utilisateurs, ajustements catégories.
+3. **Version production**
+   - Intégrations ERP/compta.
+   - Tableau de bord complet, alertes, workflow d’approbation.
+4. **Évolution**
+   - Apprentissage continu (feedback utilisateurs).
+   - Nouveaux types documents, multilingue, signature électronique.
 
-## Guide d'usage
+## 6. Stack technique suggérée
+- **Backend** : Python (FastAPI) ou Node.js (NestJS).
+- **NLP/OCR** : HuggingFace Transformers, spaCy, Tesseract/Azure/AWS.
+- **Frontend** : React + Material UI.
+- **Base** : PostgreSQL + Elasticsearch (recherche).
+- **Infrastructure** : Docker, Kubernetes, CI/CD (GitLab/GitHub Actions).
 
-1. Préparer un fichier de configuration décrivant les critères de tri (voir section Configuration des critères ci-dessous).
-2. Lancer le script principal :
-   ```bash
-   python main.py --config chemin/vers/config.yml
-   ```
-3. Vérifier les journaux et le dossier de sortie pour s'assurer que les documents ont été triés correctement.
-4. Ajuster les critères au besoin et relancer le script.
-
-## Architecture modulaire et points d'extension
-
-L'application est conçue de manière modulaire afin de faciliter son évolution :
-
-* **Collecte des documents** : module responsable de la récupération des fichiers source depuis des dossiers locaux ou des services distants.
-* **Analyse et classification** : composants regroupant les règles de tri (basées sur le contenu, les métadonnées ou les noms de fichiers).
-* **Actions de sortie** : gestion du déplacement, de la copie ou du renommage des documents selon les catégories identifiées.
-
-Chaque module expose des interfaces permettant d'ajouter de nouvelles sources de documents, des règles de classification supplémentaires ou des actions post-tri personnalisées.
-
-## Configuration des critères
-
-Les critères de tri sont définis dans un fichier YAML ou JSON. Chaque règle associe un ensemble de conditions à une action.
-
-### Exemple de configuration YAML
-
-```yaml
-criteres:
-  - nom: Factures fournisseurs
-    conditions:
-      - type: regex
-        champ: nom_fichier
-        valeur: "facture_.*"
-      - type: mot_cle
-        champ: contenu
-        valeur: "SIRET"
-    action:
-      type: deplacer
-      dossier_cible: ./sorties/factures
-
-  - nom: Contrats RH
-    conditions:
-      - type: regex
-        champ: contenu
-        valeur: "Contrat de travail"
-    action:
-      type: copier
-      dossier_cible: ./sorties/contrats
-```
-
-Ce fichier est référencé lors du lancement du script via l'option `--config`. Il est possible d'ajouter autant de règles que nécessaire pour couvrir l'ensemble des cas métiers.
-
-## Points d'assistance
-
-Pour toute question ou pour contribuer au projet, veuillez ouvrir une issue ou soumettre une pull request.
+## 7. Gouvernance & maintenance
+- Processus d’annotation continue.
+- KPIs : précision classification, temps traitement, taux d’erreurs manuelles.
+- Plan de support, documentation, formation utilisateurs.
