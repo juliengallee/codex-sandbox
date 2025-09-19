@@ -1,0 +1,4 @@
+# Sample assets generated locally
+samples/incoming/*.png
+samples/processed/**/*.png
+samples/reference/*.png

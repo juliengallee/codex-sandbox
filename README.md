@@ -55,6 +55,13 @@ Une application Streamlit (`streamlit_app.py`) est fournie pour la tâche **Dev 
    ```
 
 3. Placez vos métadonnées JSON dans `data/sample_documents.json` (structure similaire à l'exemple fourni) ou ajustez la constante `DATA_PATH`.
+4. Générez les échantillons de documents et le manifeste associés en lançant :
+
+   ```bash
+   python scripts/prepare_samples.py
+   ```
+
+   Les images synthétiques sont créées localement dans `samples/` et ignorées par Git ; le fichier `samples/manifest.json` est régénéré pour garder une vue d'ensemble des documents disponibles.
 
 ### Lancement
 
