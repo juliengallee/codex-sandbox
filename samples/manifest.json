@@ -1,0 +1,55 @@
+{
+  "generated_at": "2025-09-19T21:07:21Z",
+  "sample_count": 4,
+  "samples": [
+    {
+      "document_id": "INV-2024-0001",
+      "stage": "incoming",
+      "file_name": "invoice_acme_energy.png",
+      "description": "Facture d'énergie simulée pour tests d'ingestion.",
+      "relative_path": "samples/incoming/invoice_acme_energy.png",
+      "metadata": {
+        "predicted_category": "facture",
+        "supplier": "ACME Energy",
+        "amount": "124.50",
+        "currency": "EUR"
+      }
+    },
+    {
+      "document_id": "BULT-2024-0003",
+      "stage": "incoming",
+      "file_name": "payslip_november.png",
+      "description": "Bulletin de paie avec zones de texte simulées.",
+      "relative_path": "samples/incoming/payslip_november.png",
+      "metadata": {
+        "predicted_category": "bulletin",
+        "supplier": "Entreprise Demo",
+        "amount": "3 210.00",
+        "currency": "EUR"
+      }
+    },
+    {
+      "document_id": "INV-2024-0001",
+      "stage": "processed",
+      "file_name": "invoice_acme_energy_validated.png",
+      "description": "Facture ACME après validation manuelle.",
+      "relative_path": "samples/processed/2024/invoice_acme_energy_validated.png",
+      "metadata": {
+        "validated_by": "analyste_a",
+        "status": "validated"
+      },
+      "subfolder": "2024"
+    },
+    {
+      "document_id": "ID-REFERENCE-01",
+      "stage": "reference",
+      "file_name": "identity_card_template.png",
+      "description": "Pièce d'identité de référence pour le matching visuel.",
+      "relative_path": "samples/reference/identity_card_template.png",
+      "metadata": {
+        "document_type": "identite",
+        "issuer": "Ville de Demo"
+      }
+    }
+  ]
+}
