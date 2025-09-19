@@ -7,7 +7,7 @@ Mettre en place une solution personnelle, sécurisée et autonome fonctionnant s
 
 ### 2.1 POC local (1-2 semaines)
 - Créez un dossier surveillé sur votre Mac pour déposer vos PDF ou scans et utilisez une routine Python (ex. `watchdog`) pour déclencher l'ingestion dès qu'un fichier arrive, afin de valider le flux de collecte local sans dépendances externes.
-- Appliquez un OCR basique pour les contenus image/PDF (Tesseract via Homebrew) et entraînez un premier modèle de classification supervisée (CamemBERT ou service AutoML hors ligne) sur un échantillon réduit pour trier quelques catégories personnelles.
+- Appliquez un OCR basique pour les contenus image/PDF (Tesseract via Homebrew) et entraînez un premier modèle de classification supervisée (CamemBERT ou service AutoML hors ligne) sur un échantillon réduit pour trier quelques catégories personnelles. Le répertoire `ocr_classifier/` contient un moteur OCR, un prototype de classifieur CamemBERT et un pipeline Python prêt à l'emploi pour ce POC (voir `docs/ocr_classification.md`).
 - Exposez une interface très simple (Streamlit ou petite app React lancée en local) permettant de visualiser, trier et valider les documents afin de confirmer la pertinence métier du tri automatique, tout en conservant les données sur le disque chiffré de votre Mac.
 
 ### 2.2 MVP “usage quotidien” (3-5 semaines supplémentaires)
