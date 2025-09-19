@@ -41,3 +41,33 @@ Mettre en place une solution personnelle, sécurisée et autonome fonctionnant s
 - Gardez tout le pipeline hors ligne par défaut ; n'activez une synchronisation cloud que si elle est chiffrée de bout en bout.
 - Documentez les procédures de restauration, définissez un plan de réponse en cas de fuite locale (perte/vol de Mac) et utilisez FileVault plus un mot de passe robuste pour protéger l'ensemble de la machine.
 
+## Interface de validation locale (POC)
+
+Une application Streamlit (`streamlit_app.py`) est fournie pour la tâche **Dev C** du plan POC. Elle fonctionne hors-ligne et s'appuie sur les métadonnées situées dans `data/sample_documents.json`.
+
+### Installation rapide
+
+1. Créez un environnement Python 3.10+ dédié et activez-le.
+2. Installez les dépendances minimales :
+
+   ```bash
+   pip install streamlit pandas
+   ```
+
+3. Placez vos métadonnées JSON dans `data/sample_documents.json` (structure similaire à l'exemple fourni) ou ajustez la constante `DATA_PATH`.
+
+### Lancement
+
+```bash
+streamlit run streamlit_app.py
+```
+
+L'interface propose :
+
+- un tableau filtrable (catégorie, confiance, recherche plein texte) des documents entrants ;
+- un panneau de validation manuelle pour corriger la catégorie, ajouter un statut et consigner un commentaire ;
+- un export CSV local des décisions pour alimenter le ré-entraînement du modèle ;
+- des garde-fous UX rappelant les bonnes pratiques de sécurité hors-ligne.
+
+Les exports générés doivent être conservés sur un volume chiffré et supprimés après utilisation.
+

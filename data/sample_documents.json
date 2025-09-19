@@ -1,0 +1,41 @@
+[
+  {
+    "document_id": "DOC-2024-0001",
+    "file_name": "facture_2024-01-12.pdf",
+    "ingested_at": "2024-06-03T09:23:00",
+    "source_path": "/Volumes/Securise/Entrant/facture_2024-01-12.pdf",
+    "predicted_category": "Facture",
+    "prediction_confidence": 0.87,
+    "supplier": "Électricité de Lyon",
+    "amount": 248.35,
+    "currency": "EUR",
+    "ocr_excerpt": "Facture n°2024-56 pour la période du 01/05/2024 au 31/05/2024. Montant TTC : 248,35 €.",
+    "security_notes": "Contient des montants sensibles et des informations contractuelles."
+  },
+  {
+    "document_id": "DOC-2024-0002",
+    "file_name": "contrat_prestation.pdf",
+    "ingested_at": "2024-06-04T15:41:00",
+    "source_path": "/Volumes/Securise/Entrant/contrat_prestation.pdf",
+    "predicted_category": "Contrat",
+    "prediction_confidence": 0.73,
+    "supplier": "Atelier Design Sud",
+    "amount": 1200.0,
+    "currency": "EUR",
+    "ocr_excerpt": "Contrat de prestation signé le 03/06/2024 entre Atelier Design Sud et Client X pour des services de design.",
+    "security_notes": "Données confidentielles, signatures manuscrites incluses."
+  },
+  {
+    "document_id": "DOC-2024-0003",
+    "file_name": "recu_don_association.jpg",
+    "ingested_at": "2024-06-05T08:05:00",
+    "source_path": "/Volumes/Securise/Entrant/recu_don_association.jpg",
+    "predicted_category": "Justificatif fiscal",
+    "prediction_confidence": 0.92,
+    "supplier": "Association Avenir Solidaire",
+    "amount": 80.0,
+    "currency": "EUR",
+    "ocr_excerpt": "Reçu de don du 15/05/2024 - montant 80 euros. Signature du trésorier incluse.",
+    "security_notes": "Informations fiscales personnelles."
+  }
+]
