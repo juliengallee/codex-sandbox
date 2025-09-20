@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  python-app:
+    build: .
+    container_name: python310-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    working_dir: /app
+    command: tail -f /dev/null  # Keep container running for development
+    
+  # Service pour exécuter des commandes Python ponctuelles
+  python-cli:
+    build: .
+    container_name: python310-cli
+    volumes:
+      - .:/app
+    working_dir: /app
+    profiles:
+      - cli
+    command: python --version
